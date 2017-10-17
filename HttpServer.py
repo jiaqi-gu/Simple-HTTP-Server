@@ -37,7 +37,7 @@ class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         # Send header to the client
         self.send_response(200)
-        self.send_header("content-type","application/json")
+        self.send_header("content-type","text/html")
         content = ""
         
         # Determine if the client requests a folder or a file
@@ -51,9 +51,9 @@ class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     filepath = "%s%s%s" % (fn, os.sep, filename)
                     if os.path.isdir(filepath):
                         filename += os.sep
-                        contentFolders += """\n <tr><td valign="top"> <img src="http://www.apache.org/icons/dir.png" alt="[FOLDER]"> <a href="%s%s">%s</a> </td></tr>""" % (Host, filename, filename)
+                        contentFolders += """\n <tr><td valign="top"> <img src="http://www.apache.org/icons/dir.png" alt="[FOLDER]"> <a href="%s%s%s">%s</a> </td></tr>""" % (Host, path, filename, filename)
                     else:
-                        contentFileNames += """\n <tr><td valign="top"> <img src="http://www.apache.org/icons/generic.png" alt="[FILE]"> <a href="%s%s">%s</a> </td></tr> """ % (Host, filename, filename)
+                        contentFileNames += """\n <tr><td valign="top"> <img src="http://www.apache.org/icons/generic.png" alt="[FILE]"> <a href="%s%s%s">%s</a> </td></tr> """ % (Host, path, filename, filename)
             # Encode the output stream
             content = bytes("<h1>File System<h1>"+contentFolders+"</table>"+contentFileNames+"</table>", "utf-8")
             self.send_header("content-type","text/html")
@@ -87,7 +87,7 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 if __name__=="__main__":
     # Check the number of arguments. Only one optional argument is allowed.
     if len(sys.argv)>2:
-        print("Usage: Python HttpServer [port]")
+        print("Usage: Python HttpServer.py [port]")
 
     # Default port. Port can be changed via argument.
     port = 8080
